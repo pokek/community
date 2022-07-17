@@ -1,0 +1,7 @@
+debug: true
+logging:
+  level:
+    com.tencent.community: debug
+#  file:
+#    path: d:/data/log
+

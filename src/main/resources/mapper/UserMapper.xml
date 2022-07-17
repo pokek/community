@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.community.dao.UserMapper">
+    <sql id="insertField">
+        username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>
+    <sql id="selectField">
+        id, username, password, salt, email, type, status, activation_code, header_url, create_time
+    </sql>
+<!--    keyProperty指定主键变量名-->
+<!--    insert into user ()  values ()-->
+    <insert id="insertUser" keyProperty="id">
+        insert into user (<include refid="insertField"></include>) values  (#{userName}, #{password}, #{salt}, #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
+    </insert>
+    <update id="updateStatus">
+        update user set status = #{status} where id = #{id}
+    </update>
+    <update id="updateHeader">
+        update user set header_url = #{header} where id = #{id}
+    </update>
+    <update id="updatePassword">
+        update user set password = #{password} where id = #{id}
+    </update>
+    <select id="userById" resultType="com.tencent.community.domain.User">
+        select <include refid="selectField"/> from user where id = #{id}
+    </select>
+    <select id="userByName" resultType="com.tencent.community.domain.User">
+        select <include refid="selectField"></include> from user where username = #{username}
+    </select>
+    <select id="userByEmail" resultType="com.tencent.community.domain.User">
+        select <include refid="selectField"></include> from user where email = #{email}
+    </select>
+</mapper>

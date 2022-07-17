@@ -1,0 +1,39 @@
+server:
+  port: 85
+  servlet:
+    context-path: /community
+
+spring:
+  thymeleaf:
+    # thymeleaf缓存
+    cache: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/community?characterEncoding=utf-8
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      max-pool-prepared-statement-per-connection-size: 15
+      # 最小保持空闲连接数
+      min-idle: 5
+      # 连接最少保持空闲状态时间
+      min-evictable-idle-time-millis: 30000
+  profiles:
+    active: test
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.tencent.community.domain
+  configuration:
+    # 自增主键
+    use-generated-keys: true
+    # 表字段自动映射驼峰命名
+    map-underscore-to-camel-case: true
+
+#
+#pagehelper:
+#  reasonable: true
+#  support-methods-arguments: true
+#  params: count=countSql
+

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.community.dao.PostMapper">
+
+    <sql id="selectFields">
+        id, user_id, title, content, type, status, create_time, comment_count, score
+    </sql>
+
+<!--    先排type 再排时间-->
+    <select id="discussPostByUserId" resultType="com.tencent.community.domain.DiscussPost">
+        select <include refid="selectFields"></include> from discuss_post where status != 2
+            <if test="userid != 0">
+                and user_id = #{userid}
+            </if>
+        order by type desc, create_time desc limit #{row}, #{pageSize}
+    </select>
+
+    <select id="discussionPostAll" resultType="java.lang.Integer">
+        select count(id) from discuss_post where status != 2
+        <if test="userid != 0">
+            user_id = #{userid}
+        </if>
+    </select>
+</mapper>
