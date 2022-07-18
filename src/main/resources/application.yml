@@ -21,6 +21,20 @@ spring:
       min-evictable-idle-time-millis: 30000
   profiles:
     active: test
+  mail:
+    host: smtp.163.com
+    port: 465
+    protocol: smtps
+    username: codderjun@163.com
+    # 邮箱授权码
+    password: DXWALKLNIQNJJSVB
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+
+
 
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
@@ -31,9 +45,12 @@ mybatis:
     # 表字段自动映射驼峰命名
     map-underscore-to-camel-case: true
 
+
+
 #
 #pagehelper:
 #  reasonable: true
 #  support-methods-arguments: true
 #  params: count=countSql
 
+community-domain: http://localhost:85

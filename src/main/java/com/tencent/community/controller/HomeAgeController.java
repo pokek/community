@@ -46,7 +46,7 @@ public class HomeAgeController {
          * thyemleaf 根据键拿值
          */
         model.addAttribute("discussPost", maps);
-        return "index.html";
+        return "index";
     }
 
 }
