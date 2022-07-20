@@ -25,6 +25,10 @@ public class HomeAgeController {
     @Autowired
     DiscussPostService discussPostService;
 
+    /*
+           分页的每一页为一个超链接
+     */
+
     @RequestMapping(value = "/index", method = RequestMethod.GET)
     public String homeAge(Model model, Page page){
         page.setRows(discussPostService.findAllPost(0));

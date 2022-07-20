@@ -54,3 +54,4 @@ mybatis:
 #  params: count=countSql
 
 community-domain: http://localhost:85
+communtiy-upload-path: D:/work/data/upload

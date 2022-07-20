@@ -63,12 +63,12 @@
 		<div class="main">
 			<div class="container pl-5 pr-5 pt-3 pb-3 mt-3 mb-3">
 				<h3 class="text-center text-info border-bottom pb-3">登&nbsp;&nbsp;录</h3>
-				<form class="mt-5">				
+				<form class="mt-5" method="post" th:href="@{/login}">
 					<div class="form-group row">
 						<label for="username" class="col-sm-2 col-form-label text-right">账号:</label>
 						<div class="col-sm-10">
-							<input type="text" class="form-control is-invalid" id="username" placeholder="请输入您的账号!" required>
-							<div class="invalid-feedback">
+							<input type="text" th:class="|form-control ${usermes == null ? '' : 'is-invalid'}|" th:value="${param.username}" id="username" name="username" placeholder="请输入您的账号!" required>
+							<div class="invalid-feedback" th:text="${usermes}">
 								该账号不存在!
 							</div>
 						</div>
@@ -76,8 +76,8 @@
 					<div class="form-group row mt-4">
 						<label for="password" class="col-sm-2 col-form-label text-right">密码:</label>
 						<div class="col-sm-10">
-							<input type="password" class="form-control is-invalid" id="password" placeholder="请输入您的密码!" required>
-							<div class="invalid-feedback">
+							<input type="password" th:class="|form-control ${passwordmes == null ? '' : 'is-invalid'}|" th:value="${param.password}" id="password" name="password" placeholder="请输入您的密码!" required>
+							<div class="invalid-feedback" th:text="${passwordmes}">
 								密码长度不能小于8位!
 							</div>							
 						</div>
@@ -85,8 +85,12 @@
 					<div class="form-group row mt-4">
 						<label for="verifycode" class="col-sm-2 col-form-label text-right">验证码:</label>
 						<div class="col-sm-6">
-							<input type="text" class="form-control is-invalid" id="verifycode" placeholder="请输入验证码!">
-							<div class="invalid-feedback">
+		<!--
+					提交的参数需要有name属性
+					动态的数据需要加上th的命名空间
+							-->
+							<input type="text" th:class="|form-control  ${codemes == null ? '' : 'is-invalid'}|" id="code" name="code" placeholder="请输入验证码!">
+							<div class="invalid-feedback" th:text="${codemes}">
 								验证码不正确!
 							</div>
 						</div>
@@ -98,9 +102,9 @@
 					<div class="form-group row mt-4">
 						<div class="col-sm-2"></div>
 						<div class="col-sm-10">
-							<input type="checkbox" id="remember-me" checked="checked">
-							<label class="form-check-label" for="remember-me">记住我</label>
-							<a href="forget.html" class="text-danger float-right">忘记密码?</a>
+							<input type="checkbox" id="isLongTimeStorage" name="isLongTimeStorage" checked="checked">
+							<label class="form-check-label" for="isLongTimeStorage">记住我</label>
+							<a th:href="@{/forget}" class="text-danger float-right">忘记密码?</a>
 						</div>
 					</div>				
 					<div class="form-group row mt-4">

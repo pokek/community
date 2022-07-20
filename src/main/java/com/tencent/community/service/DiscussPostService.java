@@ -13,16 +13,16 @@ public class DiscussPostService {
     @Autowired
     PostMapper postMapper;
 
-    /**
-     * 查询某页数据
+    /*
+      查询某页数据
      */
     public List<DiscussPost> discussPostByUserId(int userId, int row, int pageSize){
 
         return postMapper.discussPostByUserId(userId, row, pageSize);
     }
 
-    /**
-     * 查询总条数
+    /*
+      查询总条数
      */
     public int findAllPost(int userId){
         return postMapper.discussionPostAll(userId);
