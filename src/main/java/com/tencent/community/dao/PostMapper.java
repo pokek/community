@@ -22,4 +22,7 @@ public interface PostMapper {
      */
     public int discussionPostAll(@Param("userid") int userId);
 
+
+    public int insertPost(DiscussPost post);
+
 }

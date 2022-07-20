@@ -85,9 +85,9 @@ public class Page {
     public Integer getTotal() {
         int n = rows % limit;
         if(n == 0){
-            return n;
+            return rows / limit;
         }else{
-            return n + 1;
+            return (rows / limit) + 1;
         }
     }
 

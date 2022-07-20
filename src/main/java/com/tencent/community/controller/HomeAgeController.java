@@ -41,6 +41,15 @@ public class HomeAgeController {
                 User user = userService.findUserById(Integer.valueOf(userId));
                 Map<String, Object> map = new HashMap<>();
                 map.put("post", post);
+
+                /*
+
+                    你妹的，自己在post表中加了一条user表中没有的userid数据，导致
+                    动态页面直接 ${content.user.useName}出现user为空的状况......
+                    手贱加的数据一定要及时删除.....
+                    不删数据的情况下 在动态页面中可以用 ${content.user.userName != null ?
+                    content.user.userName : ''}来解决
+                 */
                 map.put("user", user);
                 maps.add(map);
 

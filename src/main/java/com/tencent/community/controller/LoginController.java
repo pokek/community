@@ -159,6 +159,10 @@ public class LoginController implements CommunityConstant {
         return "redirect:/login";
     }
 
+    /*
+
+     // TODO: 2022/7/20 忘记密码功能
+     */
 //    @RequestMapping(value = "/forget", method = RequestMethod.GET)
 //    public String forget(){
 //        return "/site/forget";
