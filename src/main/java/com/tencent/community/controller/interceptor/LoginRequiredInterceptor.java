@@ -1,4 +1,4 @@
-package com.tencent.community.controller;
+package com.tencent.community.controller.interceptor;
 
 import com.tencent.community.annotation.LoginRequired;
 import com.tencent.community.domain.User;

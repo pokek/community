@@ -2,7 +2,10 @@ package com.tencent.community.controller;
 
 import com.tencent.community.annotation.LoginRequired;
 import com.tencent.community.domain.User;
+import com.tencent.community.service.FollowService;
+import com.tencent.community.service.LikeService;
 import com.tencent.community.service.UserService;
+import com.tencent.community.util.CommunityConstant;
 import com.tencent.community.util.CommunityUtils;
 import com.tencent.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -12,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
@@ -27,7 +27,7 @@ import java.io.IOException;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
 
     @Value("${communtiy-upload-path}")
     private String uploadPath;
@@ -45,6 +45,12 @@ public class UserController {
 
     @Autowired
     HostHolder hd;
+
+    @Autowired
+    LikeService likeService;
+
+    @Autowired
+    FollowService followService;
 
     @LoginRequired
     @RequestMapping(value = "/setting", method = RequestMethod.GET)
@@ -129,5 +135,24 @@ public class UserController {
         // 更新密码
         us.updateUserPassword(user, newPassword);
         return "redirect:/index";
+    }
+
+    @GetMapping("/profile/{userId}")
+    public String getUserProfile(Model model, @PathVariable("userId") int userId){
+        int userLikeCount = likeService.getUserLikeCount(userId);
+        model.addAttribute("user", us.findUserById(userId));
+        model.addAttribute("loginUser", hd.get());
+        // 点赞数
+        model.addAttribute("likeCount", userLikeCount);
+        // 关注数
+        long followeeCount = followService.followeeCount(userId, ENTITY_TYPE_USER);
+        model.addAttribute("followeeCount", followeeCount);
+        // 粉丝数
+        long followerCount = followService.followerCount(ENTITY_TYPE_USER, userId);
+        model.addAttribute("followerCount", followerCount);
+        // 是否关注
+        Boolean hasFollowed = followService.isFollowed(ENTITY_TYPE_USER, userId);
+        model.addAttribute("hasFollowed", hasFollowed);
+        return "/site/profile";
     }
 }

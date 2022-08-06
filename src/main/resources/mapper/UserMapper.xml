@@ -12,22 +12,32 @@
     <insert id="insertUser" keyProperty="id">
         insert into user (<include refid="insertField"></include>) values  (#{userName}, #{password}, #{salt}, #{email}, #{type}, #{status}, #{activationCode}, #{headerUrl}, #{createTime})
     </insert>
+
     <update id="updateStatus">
         update user set status = #{status} where id = #{id}
     </update>
+
     <update id="updateHeader">
         update user set header_url = #{header} where id = #{id}
     </update>
+
     <update id="updatePassword">
         update user set password = #{password} where id = #{id}
     </update>
+
     <select id="userById" resultType="com.tencent.community.domain.User">
         select <include refid="selectField"/> from user where id = #{id}
     </select>
+
     <select id="userByName" resultType="com.tencent.community.domain.User">
         select <include refid="selectField"></include> from user where username = #{username}
     </select>
+
     <select id="userByEmail" resultType="com.tencent.community.domain.User">
         select <include refid="selectField"></include> from user where email = #{email}
+    </select>
+
+    <select id="findUserId" resultType="java.lang.Integer">
+        select id from user where username=#{username}
     </select>
 </mapper>

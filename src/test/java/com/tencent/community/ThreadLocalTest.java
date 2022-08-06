@@ -7,6 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.concurrent.FutureTask;
 
 @SpringBootTest
 public class ThreadLocalTest implements CommunityConstant {

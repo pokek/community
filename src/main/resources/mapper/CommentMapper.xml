@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.community.dao.CommentMapper">
+    <sql id="selectField">
+        id, user_id, entity_type, entity_id, target_id, content, status, create_time
+    </sql>
+
+    <sql id="insertField">
+        user_id, entity_type, entity_id, target_id, content, status, create_time
+    </sql>
+
+    <insert id="insertComment">
+        insert into comment (<include refid="insertField"></include>) values (#{userId}, #{entityType}, #{entityId}, #{targetId}, #{content}, #{status}, #{createTime})
+    </insert>
+
+
+    <!--
+        select * from user where ..  order by ..  limit . .;   limit在sql语句最后
+        -->
+    <select id="selectCommentForPage" resultType="com.tencent.community.domain.Comment">
+        select <include refid="selectField"></include> from comment where status = 0 and entity_id = #{entityId} and entity_type = #{entityType} order by create_time limit #{offset}, #{limit}
+    </select>
+
+    <select id="findAllComment" resultType="java.lang.Integer">
+        select count(id) from comment where status =0 and entity_id = #{entityId} and entity_type = #{entityType}
+    </select>
+
+    <select id="findCommentById" resultType="com.tencent.community.domain.Comment">
+        select <include refid="selectField"></include> from comment where id = #{entityId}
+    </select>
+</mapper>

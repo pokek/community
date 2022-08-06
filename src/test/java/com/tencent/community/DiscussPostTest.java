@@ -20,7 +20,7 @@ public class DiscussPostTest {
 
     @Test
     public void selectTest(){
-        List<DiscussPost> discussPosts = postMapper.discussPostByUserId(0, 0, 10);
+        List<DiscussPost> discussPosts = postMapper.discussPostByUserId(0, 0, 10, 0);
         System.out.println(discussPosts);
         System.out.println(postMapper.discussionPostAll(0));
     }

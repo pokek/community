@@ -44,6 +44,10 @@ public class Page {
 //     */
 //    private Integer total;
 
+
+    /*
+        select 语句中的偏移量
+     */
     public Integer getStart() {
         return (current - 1) * limit;
     }

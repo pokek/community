@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -21,9 +23,9 @@ public class DiscussPostService {
     /*
       查询某页数据
      */
-    public List<DiscussPost> discussPostByUserId(int userId, int row, int pageSize){
+    public List<DiscussPost> discussPostByUserId(int userId, int row, int pageSize, int orderMode){
 
-        return postMapper.discussPostByUserId(userId, row, pageSize);
+        return postMapper.discussPostByUserId(userId, row, pageSize, orderMode);
     }
 
     /*
@@ -40,7 +42,7 @@ public class DiscussPostService {
         }
         // 转义html格式文件防止页面崩坏
         post.setTitle(HtmlUtils.htmlEscape(post.getTitle()));
-        post.setTitle(HtmlUtils.htmlEscape(post.getTitle()));
+        post.setContent(HtmlUtils.htmlEscape(post.getContent()));
         // 过滤敏感词
         post.setTitle(filterTool.filter(post.getTitle()));
         post.setContent(filterTool.filter(post.getContent()));
@@ -48,4 +50,24 @@ public class DiscussPostService {
         return postMapper.insertPost(post);
     }
 
+    public DiscussPost findPostById(int id){
+        return postMapper.selectPostById(id);
+    }
+
+    public int updatePostCommentCount(int id, int count){
+        return postMapper.updatePostCommentCount(id, count);
+    }
+
+    public int updateType(int id, int type) {
+        return postMapper.updateType(id, type);
+    }
+
+    public int updateStatus(int id, int status) {
+        return postMapper.updateStatus(id, status);
+    }
+
+
+    public void updateScore(int postId, double score) {
+        postMapper.updateScore(postId, score);
+    }
 }

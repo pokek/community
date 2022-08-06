@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 
 /*
-    !  为什么封装一个对象放在容器中?????
+    !  为什么封装一个对象放在容器中?????   托管给容器管理，并且是单例，所有成员变量，但是threadlocal就是为当前线程绑定变量即可认为是当前线程变量，是线程安全的
     ! tomcat中的请求线程池为 nio线程池
  */
 @Component

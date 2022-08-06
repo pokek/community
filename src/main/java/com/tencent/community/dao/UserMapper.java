@@ -22,4 +22,9 @@ public interface UserMapper {
     int updateHeader(@Param("id") int id, @Param("header") String header);
 
     int updatePassword(@Param("id") int id, @Param("password") String password);
+
+    /*
+        没有用户id时  mybatis返回null
+     */
+    Integer findUserId(String username);
 }

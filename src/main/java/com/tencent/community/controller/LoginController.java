@@ -1,11 +1,14 @@
 package com.tencent.community.controller;
 
+import ch.qos.logback.core.util.TimeUtil;
 import com.google.code.kaptcha.Producer;
 import com.tencent.community.dao.TicketMapper;
 import com.tencent.community.domain.LoginTicket;
 import com.tencent.community.domain.User;
 import com.tencent.community.service.UserService;
 import com.tencent.community.util.CommunityConstant;
+import com.tencent.community.util.CommunityUtils;
+import com.tencent.community.util.LikeUtils;
 import com.tencent.community.util.MailClient;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +16,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.TimeoutUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -30,6 +36,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 public class LoginController implements CommunityConstant {
@@ -50,6 +58,9 @@ public class LoginController implements CommunityConstant {
 
     @Autowired
     MailClient sendMail;
+
+    @Autowired
+    RedisTemplate redisTemplate;
 
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -104,7 +115,16 @@ public class LoginController implements CommunityConstant {
     public void getKapt(HttpServletResponse response, HttpSession session){
         String text = kaptcha.createText();
         BufferedImage image = kaptcha.createImage(text);
-        session.setAttribute("kaptcha", text);
+//        session.setAttribute("kaptcha", text);
+        // 存入redis中
+        String randomString = CommunityUtils.getUUID();
+        String key = LikeUtils.getKaptchaKey(randomString);
+        redisTemplate.opsForValue().set(key, text, 60, TimeUnit.SECONDS);
+        // 携带随机字符串给cookie，发给客户端
+        Cookie cookie = new Cookie("kaptchakey", randomString);
+        cookie.setMaxAge(60);  // 单位秒
+        cookie.setPath(contextPath);  // 设置能获取cookie的路径
+        response.addCookie(cookie);
         // 设置响应文件格式
         response.setContentType("image/png");
         try {
@@ -124,8 +144,8 @@ public class LoginController implements CommunityConstant {
     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String login(String username, String password, boolean isLongTimeStorage,
-                        String code, HttpSession session, HttpServletResponse response,
-                        Model model){
+                        String code, /*HttpSession session,*/ HttpServletResponse response,
+                        Model model, @CookieValue("kaptchakey") String cookieValue){
         if(StringUtils.isBlank(code)){
             model.addAttribute("codemes", "验证码不能为空");
             /**
@@ -134,7 +154,15 @@ public class LoginController implements CommunityConstant {
 //            return "/login";
             return "/site/login";
         }
-        if(!code.equalsIgnoreCase((String) session.getAttribute("kaptcha"))){
+//        if(!code.equalsIgnoreCase((String) session.getAttribute("kaptcha"))){
+//            model.addAttribute("codemes", "验证码错误");
+//            return "/site/login";
+//        }
+        // 从redis中取值进行验证码验证
+        // 生成key
+        String key = LikeUtils.getKaptchaKey(cookieValue);
+        String text = (String) redisTemplate.opsForValue().get(key);
+        if(text == null || !code.equalsIgnoreCase(text)){
             model.addAttribute("codemes", "验证码错误");
             return "/site/login";
         }
@@ -156,6 +184,7 @@ public class LoginController implements CommunityConstant {
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logOut(@CookieValue("ticket") String ticket){
         us.updateTicketStaus(ticket);
+        SecurityContextHolder.clearContext();
         return "redirect:/login";
     }
 

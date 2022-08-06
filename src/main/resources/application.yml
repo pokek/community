@@ -33,6 +33,44 @@ spring:
         smtp:
           ssl:
             enable: true
+  redis:
+    port: 6379
+    host: localhost
+    database: 10
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: community-consumer-group
+      enable-auto-commit: true
+      auto-commit-interval: 3000
+  elasticsearch:
+    uris: 127.0.0.1:9200
+    connection-timeout: 60s
+  task:
+    execution:
+      pool:
+        core-size: 5
+        max-size: 10
+        queue-capacity: 100
+
+    scheduling:
+      pool:
+        size: 5
+  quartz:
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          jobStore:
+            class: org.springframework.scheduling.quartz.LocalDataSourceJobStore
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            isClustered: true
+          scheduler:
+            instanceId: AUTO
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 5
+    scheduler-name: communityScheduler
 
 
 
@@ -55,3 +93,8 @@ mybatis:
 
 community-domain: http://localhost:85
 communtiy-upload-path: D:/work/data/upload
+
+wk:
+  image:
+    command: D:/workspace/wkhtmltopdf/bin/wkhtmltoimage
+    storage: d:/work/data/wk-images
