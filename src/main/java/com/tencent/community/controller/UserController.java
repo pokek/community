@@ -1,5 +1,7 @@
 package com.tencent.community.controller;
 
+import com.qiniu.util.Auth;
+import com.qiniu.util.StringMap;
 import com.tencent.community.annotation.LoginRequired;
 import com.tencent.community.domain.User;
 import com.tencent.community.service.FollowService;
@@ -8,6 +10,7 @@ import com.tencent.community.service.UserService;
 import com.tencent.community.util.CommunityConstant;
 import com.tencent.community.util.CommunityUtils;
 import com.tencent.community.util.HostHolder;
+import com.tencent.community.util.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +55,51 @@ public class UserController implements CommunityConstant {
     @Autowired
     FollowService followService;
 
+    @Value("${qiniu.key.access}")
+    private String accessKey;
+
+    @Value("${qiniu.key.secret}")
+    private String secretKey;
+
+    @Value("${qiniu.bucket.header.name}")
+    private String headerBucketName;
+
+    @Value("${qiniu.bucket.header.url}")
+    private String headerBucketUrl;
+
     @LoginRequired
     @RequestMapping(value = "/setting", method = RequestMethod.GET)
-    public String getSettingPage(){
+    public String getSettingPage(Model model){
+        // 上传文件名称
+        String fileName = CommunityUtils.getUUID();
+        // 设置响应信息
+        StringMap policy = new StringMap();
+        policy.put("returnBody", JsonUtils.getJsonString(0));
+        // 生成上传凭证
+        Auth auth = Auth.create(accessKey, secretKey);
+        String uploadToken = auth.uploadToken(headerBucketName, fileName, 3600, policy);
+
+        model.addAttribute("uploadToken", uploadToken);
+        model.addAttribute("fileName", fileName);
         return "/site/setting";
     }
 
+    // 更新头像路径
+    @RequestMapping(path = "/header/url", method = RequestMethod.POST)
+    @ResponseBody
+    public String updateHeaderUrl(String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            return JsonUtils.getJsonString(1, "文件名不能为空!");
+        }
+
+        String url = headerBucketUrl + "/" + fileName;
+        us.updateUserHeaderUrl(hd.get().getId(), url);
+
+        return JsonUtils.getJsonString(0);
+    }
+
+
+    // 废弃
     @LoginRequired
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String upload(MultipartFile headImage, Model model){
@@ -92,6 +134,7 @@ public class UserController implements CommunityConstant {
         return "redirect:/index";
     }
 
+    // 废弃
     @RequestMapping(value = "/header/{filename}", method = RequestMethod.GET)
     public void getHeader(HttpServletResponse response, @PathVariable("filename") String filename){
         // 打开本地文件输入流

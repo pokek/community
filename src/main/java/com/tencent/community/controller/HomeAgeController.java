@@ -31,6 +31,11 @@ public class HomeAgeController implements CommunityConstant {
     @Autowired
     LikeService likeService;
 
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String root(){
+        return "forward:/index";
+    }
+
     /*
            分页的每一页为一个超链接
      */

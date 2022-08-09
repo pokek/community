@@ -10,7 +10,7 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SimpleTriggerFactoryBean;
 
 // 配置 -> 数据库 -> 调用
-@Configuration
+//@Configuration
 public class QuartzConfig {
 
     // FactoryBean可简化Bean的实例化过程:
